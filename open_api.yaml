@@ -3,9 +3,6 @@ info:
   title: Cyan
   description: Cyan workspace
   version: 0.0.0
-servers:
-  - url: https://cyan-subscription-management.com/api/v1
-    description: Cyan account and subscription management API.
 paths:
   /accounts:
     post:
@@ -36,14 +33,21 @@ paths:
                           type: integer
                       active:
                         type: boolean
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
                     required:
                       - id
                       - name
                       - company_id
                       - subscriptions
                       - active
+                      - created_at
+                      - updated_at
                 required:
                   - account
+                title: CreateANewAccountCreated
         "400":
           description: Bad request was created.
           content:
@@ -64,6 +68,7 @@ paths:
                         - message
                 required:
                   - message
+                title: CreateANewAccountBadRequest
         "401":
           description: Unauthorized request.
           content:
@@ -75,6 +80,7 @@ paths:
                     type: string
                 required:
                   - message
+                title: CreateANewAccountUnauthorized
         "403":
           description: Forbidden.
           content:
@@ -86,6 +92,7 @@ paths:
                     type: string
                 required:
                   - message
+                title: CreateANewAccountForbidden
         "404":
           description: Resource not found.
           content:
@@ -97,6 +104,7 @@ paths:
                     type: string
                 required:
                   - message
+                title: CreateANewAccountNotFound
         "500":
           description: Internal sever error.
           content:
@@ -108,6 +116,7 @@ paths:
                     type: string
                 required:
                   - message
+                title: CreateANewAccountInternalServerError
       parameters: []
       description: Creates a new account using an API key and a company ID.
       security:
@@ -155,6 +164,7 @@ paths:
             application/json:
               schema:
                 type: "null"
+                title: DeleteAnAccountNoContent
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -219,14 +229,21 @@ paths:
                         type: array
                         items:
                           type: integer
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
                     required:
                       - name
                       - id
                       - active
                       - company_id
                       - subscriptions
+                      - created_at
+                      - updated_at
                 required:
                   - account
+                title: UpdateAccountSubscriptionsOk
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -297,12 +314,19 @@ paths:
                         type: integer
                       description:
                         type: string
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
                     required:
                       - name
                       - id
                       - description
+                      - created_at
+                      - updated_at
                 required:
                   - subscription
+                title: CreateANewSubscriptionCreated
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -371,6 +395,7 @@ paths:
             application/json:
               schema:
                 type: "null"
+                title: DeleteASubscriptionNoContent
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -404,6 +429,12 @@ paths:
       description: Delete an existing subscription.
       security:
         - api-key: []
+tags:
+  - name: accounts
+  - name: subscriptions
+servers:
+  - url: https://cyan-subscription-management.com/api/v1
+    description: Cyan account and subscription management API.
 components:
   securitySchemes:
     api-key:
@@ -420,7 +451,6 @@ components:
     subscription_id:
       name: subscription_id
       in: path
-      required: true
       description: ""
       schema:
         type: integer
@@ -487,6 +517,4 @@ components:
                 type: string
             required:
               - message
-tags:
-  - name: accounts
-  - name: subscriptions
+
