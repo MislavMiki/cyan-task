@@ -1,0 +1,492 @@
+openapi: 3.1.0
+info:
+  title: Cyan
+  description: Cyan workspace
+  version: 0.0.0
+servers:
+  - url: https://cyan-subscription-management.com/api/v1
+    description: Cyan account and subscription management API.
+paths:
+  /accounts:
+    post:
+      operationId: createANewAccount
+      tags:
+        - accounts
+      summary: Create a new account
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      company_id:
+                        type: integer
+                      subscriptions:
+                        type: array
+                        items:
+                          type: integer
+                      active:
+                        type: boolean
+                    required:
+                      - id
+                      - name
+                      - company_id
+                      - subscriptions
+                      - active
+                required:
+                  - account
+        "400":
+          description: Bad request was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                      required:
+                        - message
+                required:
+                  - message
+        "401":
+          description: Unauthorized request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "404":
+          description: Resource not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "500":
+          description: Internal sever error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+      parameters: []
+      description: Creates a new account using an API key and a company ID.
+      security:
+        - api-key: []
+      requestBody:
+        required: true
+        description: Create account JSON.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    active:
+                      type: boolean
+                    company_id:
+                      type: integer
+                    subscriptions:
+                      type: array
+                      items:
+                        type: integer
+                  required:
+                    - name
+                    - active
+                    - company_id
+                    - subscriptions
+              required:
+                - account
+  /accounts/{account_id}:
+    delete:
+      operationId: deleteAnAccount
+      tags:
+        - accounts
+      summary: Delete an account
+      parameters:
+        - $ref: "#/components/parameters/account_id"
+      responses:
+        "204":
+          description: Account was deleted.
+          content:
+            application/json:
+              schema:
+                type: "null"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: Authentication is required to access the requested resource. The
+            client must include the appropriate credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "403":
+          description: The server understood the request, but refuses to authorize it.
+            Ensure the client has appropriate permissions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerErrror"
+      security:
+        - api-key: []
+      description: Delete an existing account.
+    patch:
+      operationId: updateAccountSubscriptions
+      tags:
+        - accounts
+      summary: Update account subscriptions
+      parameters:
+        - $ref: "#/components/parameters/account_id"
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      id:
+                        type: integer
+                      active:
+                        type: boolean
+                      company_id:
+                        type: string
+                      subscriptions:
+                        type: array
+                        items:
+                          type: integer
+                    required:
+                      - name
+                      - id
+                      - active
+                      - company_id
+                      - subscriptions
+                required:
+                  - account
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: Authentication is required to access the requested resource. The
+            client must include the appropriate credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "403":
+          description: The server understood the request, but refuses to authorize it.
+            Ensure the client has appropriate permissions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerErrror"
+      security:
+        - api-key: []
+      description: Updates the subscriptions on an existing account.
+      requestBody:
+        required: true
+        description: Subscriptions array.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscriptions:
+                  type: array
+                  items:
+                    type: integer
+              required:
+                - subscriptions
+  /subscriptions:
+    post:
+      operationId: createANewSubscription
+      tags:
+        - subscriptions
+      summary: Create a new subscription
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscription:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      id:
+                        type: integer
+                      description:
+                        type: string
+                    required:
+                      - name
+                      - id
+                      - description
+                required:
+                  - subscription
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: Authentication is required to access the requested resource. The
+            client must include the appropriate credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "403":
+          description: The server understood the request, but refuses to authorize it.
+            Ensure the client has appropriate permissions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerErrror"
+      security:
+        - api-key: []
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    description:
+                      type: string
+                  required:
+                    - name
+                    - description
+              required:
+                - subscription
+  /subscriptions/{subscription_id}:
+    delete:
+      operationId: deleteASubscription
+      tags:
+        - subscriptions
+      summary: Delete a subscription
+      parameters:
+        - $ref: "#/components/parameters/subscription_id"
+      responses:
+        "204":
+          description: The request was successful, but there is no content to return in
+            the response.
+          content:
+            application/json:
+              schema:
+                type: "null"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: Authentication is required to access the requested resource. The
+            client must include the appropriate credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "403":
+          description: The server understood the request, but refuses to authorize it.
+            Ensure the client has appropriate permissions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerErrror"
+      description: Delete an existing subscription.
+      security:
+        - api-key: []
+components:
+  securitySchemes:
+    api-key:
+      type: apiKey
+      name: api-key
+      in: header
+  parameters:
+    account_id:
+      name: account_id
+      in: path
+      required: true
+      schema:
+        type: integer
+    subscription_id:
+      name: subscription_id
+      in: path
+      required: true
+      description: ""
+      schema:
+        type: integer
+      explode: false
+      style: simple
+      allowReserved: false
+      allowEmptyValue: true
+  responses:
+    BadRequest:
+      description: The server could not understand the request due to invalid syntax.
+        The client should modify the request and try again.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                  required:
+                    - message
+            required:
+              - message
+    NotFound:
+      description: The server cannot find the requested resource. The endpoint may be
+        invalid or the resource may no longer exist.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+    InternalServerErrror:
+      description: The server encountered an unexpected condition that prevented it
+        from fulfilling the request. Report the issue to the support team if it
+        persists.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+    Conflict:
+      description: The request could not be completed due to a conflict with the
+        current state of the resource. Resolve the conflict and try again.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+tags:
+  - name: accounts
+  - name: subscriptions
